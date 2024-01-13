@@ -11,4 +11,4 @@ Tic-tac-toe AI Project Website
 (https://amarumendez.github.io/tic-tac-toe-ai/)
 
 My Website
-(https://sites.google.com/view/amarusite/home?authuser=0)
+(https://sites.google.com/view/amarusite)
