@@ -1,29 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Tic-Tac-Toe</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Tic-Tac-Toe</title>
 </head>
+
 <body>
-    <div class="container">
-        <h1>Tic-Tac-Toe</h1>
-        <div id="settings" class="settings-container">
-            <label for="playerMode">Select Player Mode:</label>
-            <select id="playerMode">
-                <option value="human">Human vs. AI</option>
-                <option value="twoPlayers">Two Players</option>
-            </select>
-            <button id="resetButton">Reset Game</button>
-        </div>
-        <div id="stateTurn">Player X's turn</div>
-        <div id="stateResult"></div>
-        <div id="board" class="board">
-            <!-- The game board will be generated here -->
-        </div>
-      <div id="instruction"><p>Place 3 in a row</p></div>
-        <script src="main.js"></script>
+  <div class="container">
+    <h1>Tic-Tac-Toe</h1>
+
+    <div class="menu-btn-container">
+      <button id="menu" onclick="toggleMenu()">
+        <img src="img/menuico.svg" alt="hamburger menu icon" width="30" height="30">
+      </button>
     </div>
+
+    <div id="overlay" onclick="toggleMenu()">
+      <div id="menu-links">
+        <a id="1" href="#"><img src="img/gsitesico.png" alt="google-site-logo" width="30" height="45"> Documentation</a>
+        <a id="2" href="#"><img src="img/gslideico.png" alt="google-slide-logo" width="30" height="45"> Presentation</a>
+        <a id="3" href="#"><img src="img/ytico.png" alt="yt-logo" width="30" height="30"> Video</a>
+        <a id="4" href="#"><img src="img/githublogo.png" alt="github-logo" width="30" height="30"> Github</a>
+      </div>
+    </div>
+    
+    <div id="settings" class="settings-container">
+      <label for="playerMode">Select Player Mode:</label> <!-- Basically like a gamemode -->
+      <select id="playerMode">
+        <!-- Easy: Randomness, Medium: Heuristics, Hard: Minimax, Impossible: Minimax + Alpha-Beta Pruning  -->
+        <option value="easy">Human vs. Easy AI</option>
+        <option value="medium">Human vs. Medium AI</option>
+        <option value="hard">Human vs. Hard AI</option>
+        <option value="twoPlayers">Two Players</option>
+      </select>
+      <button id="resetButton">Reset Game</button>
+    </div>
+    <div id="stateTurn">Player X's turn</div>
+    <div id="stateResult"></div>
+    <div id="board" class="board">
+      <!-- The game board will be generated here -->
+    </div>
+    <div id="instruction">
+      <p>Place 3 in a row</p>
+    </div>
+
+    <script src="main.js"></script>
+    <script>
+      // Opens the Menu 
+
+      function toggleMenu() {
+
+        var overlay = document.getElementById('overlay');
+        var menuIcon = document.getElementById('menu');
+
+        if (overlay.style.width === '100%') {
+          // Close menu
+          overlay.style.width = '0';
+          menuIcon.getElementsByTagName('img')[0].src = 'img/menuico.svg';
+        } else {
+          // Open menu
+          overlay.style.width = '100%';
+          menuIcon.getElementsByTagName('img')[0].src = 'img/xico.svg';
+        }
+      }
+      
+      function addFadeInClass() {
+        // Add the fade-in class to the body
+        document.body.classList.add('fade-in');
+
+        // Remove the fade-in class after 1 second
+        setTimeout(function () {
+          document.body.classList.remove('fade-in');
+
+          setTimeout(addFadeInClass, 5000);
+        }, 5500);
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        addFadeInClass();
+      });
+    </script>
+  </div>
 </body>
+
 </html>
