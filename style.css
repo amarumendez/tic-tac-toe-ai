@@ -1,23 +1,55 @@
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: "Century Gothic", Futura, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   margin: 0;
-  background-color: #242629;
+  background-image: linear-gradient(
+    to right,
+    hsl(211, 100%, 50%),
+    hsl(179, 100%, 30%)
+  );
   color: white;
+  position: relative;
+  transition: background 0.5s linear;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(
+    to bottom,
+    hsl(195, 100%, 50%),
+    hsl(195, 100%, 40%)
+  );
+  z-index: -1;
+  transition: opacity 0.5s linear;
+  opacity: 0;
+}
+
+.fade-in::before {
+  opacity: 1;
 }
 
 .container {
   text-align: center;
 }
 
+.container #stateTurn {
+  font-size: 1.2rem;
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(3, 100px);
   grid-gap: 5px;
-  }
+  position: relative; /* Set game board to relative position */
+}
 
 .cell {
   width: 100px;
@@ -32,4 +64,97 @@ body {
 
 #instruction {
   font-size: 1.2em;
+}
+
+h1 {
+  font-family: "Bree Serif", serif;
+  font-size: 48px;
+  font-weight: bolder;
+}
+
+a, body {
+  color: #fff;
+}
+
+.settings-container {
+  display: flex;
+  flex-direction: column; /* Arrange settings container in a column */
+  position: absolute;
+  top: 0;
+  right: 20px;
+  border: white 1px solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 5px;
+}
+
+.menu-btn-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 5.5px;
+}
+
+.menu-btn-container button {
+  background-color: transparent;
+  border: transparent;
+  transition: 0.7s;
+}
+
+.menu-btn-container button:hover {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.menu-btn-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+#menu {
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+#menu img {
+  transition: transform 0.3s;
+}
+
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  overflow-x: hidden;
+  transition: 0.5s;
+  z-index: 999;
+}
+
+#menu-links {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  text-align: center;
+  color: white;
+}
+
+#menu-links a {
+  display: block;
+  padding: 20px;
+  font-size: 20px;
+  text-decoration: none;
+  color: white;
+  transition: 0.7s;
+}
+
+#menu-links a:hover {
+  transform: scale(1.2);
+  cursor: pointer;
 }
