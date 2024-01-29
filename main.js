@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentPlayer = 'X';
   let gameBoard = Array(9).fill('');
   let gameActive = true;
-  let gameMode = 'hard'; // Default to hard mode
+  let gameMode = 'easy'; // Default to easy mode
 
   // Create the game board with 9 cells making a 3x3 grid
   for (let i = 0; i < 9; i++) {
