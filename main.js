@@ -6,73 +6,91 @@ document.addEventListener('DOMContentLoaded', () => {
   const playerModeSelect = document.getElementById('playerMode');
   const resetButton = document.getElementById('resetButton');
 
-  let currentPlayer = 'X'; // Sets currenplayer to X
-  let gameBoard = ['', '', '', '', '', '', '', '', '']; // Gameboard wth 9 empty cells for 3x3 grid
-  let gameActive = true; // Sets game activity to true, starting the game
-  let gameMode = 'easy'; // Default game mode is Human vs. Easy AI
+  let currentPlayer = 'X';
+  let gameBoard = Array(9).fill('');
+  let gameActive = true;
+  let gameMode = 'hard'; // Default to hard mode
 
-  // Create the game board with 9 cells making 3x3 grid
+  // Create the game board with 9 cells making a 3x3 grid
   for (let i = 0; i < 9; i++) {
-    // create variable for each of the cells
     const cell = document.createElement('div');
-    // sets cell class to 'cell'
     cell.classList.add('cell');
-    cell.dataset.index = i; // Sets the data-index attribute to the cell index
-    cell.addEventListener('click', () => makeMove(i)); // Makes move to the cell by its index
-    board.appendChild(cell); // adds a new cell to the board
+    cell.dataset.index = i;
+    cell.addEventListener('click', () => makeMove(i));
+    board.appendChild(cell);
   }
 
-  // Function to handle player moves
+  // Function to make move on the gameBoard
   function makeMove(index) {
     if (gameActive && gameBoard[index] === '') {
       gameBoard[index] = currentPlayer;
-      updateBoard(); // Updates the board with the current player's move
-      checkWinner(); // Call checkWinner after each move
-      currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; // Switches the current player
-      // Update the turn state
-      stateTurn.textContent = gameActive ? `Player ${currentPlayer}'s turn` : ''; // Sets the turn state to the current player's turn
-      if (gameMode === 'easy' && currentPlayer === 'O') {
-        // AI's turn
-        setTimeout(() => makeAIMove(), 500); // Delays the ai move by 500 milliseconds
-      } else if (gameMode === 'medium' && currentPlayer === 'O') {
-        // AI's Turn in Medium Mode
-        setTimeout(() => makeAIMove(), 500); // delays the ai move by 500 milliseconds
+      updateBoard();
+      const winner = checkWinner(gameBoard); // Check for winner after each move
+
+      if (winner !== null) {
+        endGame(winner);
+      } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        stateTurn.textContent = `Player ${currentPlayer}'s turn`;
+
+        // Trigger AI move after human move
+        if (gameMode === 'easy' && currentPlayer === 'O') {
+          setTimeout(() => makeAIMove(), 500)
+        } else if (gameMode === 'medium' && currentPlayer === 'O') {
+          setTimeout(() => makeAIMove(), 500)
+        } else if (gameMode === 'hard' && currentPlayer === 'O') {
+          setTimeout(() => makeAIMove(), 500);
+        }
       }
     }
   }
-  // Function to handle AI moves
+
+  // Function to update the game board using AI move
   function makeAIMove() {
+    let bestMove;
     if (gameMode === 'easy') {
-      // Easy AI Move (Randomization)
-      const availableMoves = gameBoard.reduce((acc, val, index) => {
-        if (val === '') {
-          acc.push(index);
-        }
-        return acc;
-      },[]);
-      const randomIndex = Math.floor(Math.random() * availableMoves.length);
-      makeMove(availableMoves[randomIndex]);
-      
+      bestMove = bestEasyAIMove();
     } else if (gameMode === 'medium') {
-      // Medium AI Move (Heuristics)
-      const bestMove = bestMediumAIMove(); // Finds the best move for the Heuristics Medium AI
-      makeMove(bestMove.index); 
-      
+      bestMove = bestMediumAIMove();
     } else if (gameMode === 'hard') {
-      // Hard AI Move (Minimax Algorithm)
-      const bestMove = bestHardAIMove();  // Finds the best move for the Minimax Hard AI
-      makeMove(bestMove.index);
+      bestMove = bestHardAIMove();
+    }
+
+    if (bestMove !== null) {
+      makeMove(bestMove);
     }
   }
 
-  // Heuristic function to evaluate the board
-  function evaluateMediumAI(board) {
-    // Heuristcs Logic 
-    // You can assign scores based on the current state of the board
-    // Return a higher score for a more favorable board position for the AI
-    // Return a lower score for a more favorable board position for the human player
-    // Return 0 for neutral positions
+  // Function for best move for Easy AI using Randomization
+  function bestEasyAIMove() {
+    const emptyCells = gameBoard.map((cell, index) => cell === '' ? index : -1).filter(index => index !== -1);
+    if (emptyCells.length > 0) {
+      const randomIndex = Math.floor(Math.random() * emptyCells.length);
+      return emptyCells[randomIndex];
+    }
+    return null;
+  }
 
+  function bestMediumAIMove() {
+    let bestScore = -Infinity;
+    let bestMove;
+
+    for (let i = 0; i < 9; i++) {
+      if (gameBoard[i] === '') {
+        gameBoard[i] = currentPlayer; // Make a move
+        let score = evaluateMediumAI(gameBoard); // Evaluate the move
+        gameBoard[i] = ''; // Undo the move
+
+        if (score > bestScore) {
+          bestScore = score; // Update the best score
+          bestMove = i; // Update the best move
+        }
+      }
+    }
+    return bestMove;
+  }
+
+  function evaluateMediumAI(board) {
     // Example heuristic: Count the number of X's minus the number of O's on the board
     let score = 0;
     for (let cell of board) {
@@ -85,35 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return score;
   }
 
-  // Function to get the best move using heuristic evaluation
-  function bestMediumAIMove() {
-    let bestScore = -Infinity;
-    let bestMove;
-
-    for (let i = 0; i < 9; i++) {
-      if (gameBoard[i] === '') {
-        gameBoard[i] = currentPlayer; // Make a move
-        let score = evaluateMediumAI(gameBoard);
-        gameBoard[i] = ''; // Undo the move
-
-        if (score > bestScore) {
-          bestScore = score; // Update the best score
-          bestMove = { index: i }; // Update the best move
-        }
-      }
-    }
-
-    return bestMove;
-  }
-
-  // Minimax algorithm for the hard AI
-  function minimax(board, depth, isMaximizing) {
-    // Implement the minimax algorithm logic here
-    // You can use the evaluateMediumAI function to evaluate the board state
-    
-  }
-
-  // Function to get the best move using the minimax algorithm
+  // Function for best move for hard AI using minimax algorithm
   function bestHardAIMove() {
     let bestScore = -Infinity;
     let bestMove;
@@ -121,20 +111,100 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < 9; i++) {
       if (gameBoard[i] === '') {
         gameBoard[i] = currentPlayer;
-        let score = minimax(gameBoard, 0, false);
-        gameBoard[i] = ''; // Undo the move
+        let score = minimax(gameBoard, 3, false);
+        gameBoard[i] = '';
 
         if (score > bestScore) {
           bestScore = score;
-          bestMove = { index: i };
+          bestMove = i;
+        }
+      }
+    }
+    return bestMove;
+  }
+
+  // Minimax algorithm with alpha-beta pruning
+  function minimax(board, depth, isMaximizing, alpha = -Infinity, beta = Infinity) {
+    const winner = checkWinner(board);
+
+    // Terminal state evaluation
+    if (winner !== null || depth === 0) {
+      return evaluateHardAI(board, currentPlayer);
+    }
+
+    if (isMaximizing) {
+      let maxEval = -Infinity;
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === '') {
+          const newBoard = [...board];
+          newBoard[i] = currentPlayer;
+          const eval = minimax(newBoard, depth - 1, false, alpha, beta);
+          maxEval = Math.max(maxEval, eval);
+          alpha = Math.max(alpha, eval);
+          if (beta <= alpha) break; // Beta cutoff
+        }
+      }
+      return maxEval;
+    } else {
+      let minEval = Infinity;
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === '') {
+          const newBoard = [...board];
+          newBoard[i] = currentPlayer === 'X' ? 'O' : 'X';
+          const eval = minimax(newBoard, depth - 1, true, alpha, beta);
+          minEval = Math.min(minEval, eval);
+          beta = Math.min(beta, eval);
+          if (beta <= alpha) break; // Alpha cutoff
+        }
+      }
+      return minEval;
+    }
+  }
+
+  // Function for evaluating the board for hard AI
+  function evaluateHardAI(board, player) {
+    const winPatterns = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+      [0, 4, 8], [2, 4, 6]             // Diagonals
+    ];
+
+    for (const pattern of winPatterns) {
+      const [a, b, c] = pattern;
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        if (board[a] === player) {
+          // AI wins
+          return 100;
+        } else {
+          // Opponent wins
+          return -100;
         }
       }
     }
 
-    return bestMove;
+    if (!board.includes('')) {
+      // Draw
+      return 0;
+    }
+
+    let score = 0;
+
+    for (const pattern of winPatterns) {
+      const [a, b, c] = pattern;
+      const line = [board[a], board[b], board[c]];
+
+      const countPlayer = line.filter(cell => cell === player).length;
+      const countOpponent = line.filter(cell => cell !== player && cell !== '').length;
+
+      // Score based on player's positions
+      score += countPlayer * countPlayer;
+      score -= countOpponent * countOpponent;
+    }
+
+    return score;
   }
 
-  // Function to update the visual representation of the board
+  // Function to update the board with the current game state
   function updateBoard() {
     const cells = document.querySelectorAll('.cell');
     cells.forEach((cell, index) => {
@@ -142,8 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Function to check for a winner
-  function checkWinner() {
+  // Function to check for win patterns & ties
+  function checkWinner(board) {
     const winPatterns = [
       [0, 1, 2],
       [3, 4, 5],
@@ -157,23 +227,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     for (const pattern of winPatterns) {
       const [a, b, c] = pattern;
-      if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
-        stateResult.textContent = `${gameBoard[a]} wins!`;
-        gameActive = false;
-        break;
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        return board[a]; // Return the winner
       }
     }
 
-    if (!gameBoard.includes('') && gameActive) {
+    if (!board.includes('')) {
+      return 'draw'; // Return draw if no winner and board is full
+    }
+
+    return null; // Return null if no winner and board is not full
+  }
+
+  // Function to end the game
+  function endGame(winner) {
+    gameActive = false;
+    if (winner === 'draw') {
       stateResult.textContent = 'It\'s a draw!';
-      gameActive = false;
+    } else {
+      stateResult.textContent = `${winner} wins!`;
     }
   }
 
-
-  // Reset game function
+  // Resets the gameBoard & Score
   function resetGame() {
-    gameBoard = ['', '', '', '', '', '', '', '', ''];
+    gameBoard = Array(9).fill('');
     currentPlayer = 'X';
     gameActive = true;
     stateTurn.textContent = `Player ${currentPlayer}'s turn`;
@@ -181,17 +259,22 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBoard();
   }
 
-  // Event listener for the reset button
   resetButton.addEventListener('click', resetGame);
 
-  // Event listener for player mode select
   playerModeSelect.addEventListener('change', () => {
     gameMode = playerModeSelect.value;
     resetGame();
-    stateTurn.textContent = gameMode === 'easy' ? `Player ${currentPlayer}'s turn` : '';
+    if (gameMode === 'easy' || gameMode === 'medium' || gameMode === 'hard') {
+      stateTurn.textContent = `Player ${currentPlayer}'s turn`;
+      if (gameMode === 'hard' && currentPlayer === 'O') {
+        setTimeout(() => makeAIMove(), 500);
+      }
+    } else if (gameMode === 'twoPlayers') {
+      stateTurn.textContent = `Player ${currentPlayer}'s turn`;
+    } else {
+      stateTurn.textContent = '';
+    }
   });
-
-  // Initial turn state
   stateTurn.textContent = `Player ${currentPlayer}'s turn`;
-  
+
 });
