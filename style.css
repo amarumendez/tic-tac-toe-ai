@@ -11,6 +11,12 @@ body {
   color: white;
   position: relative;
   transition: background 0.5s linear;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 body::before {
@@ -38,12 +44,14 @@ body::before {
 
 .container #stateTurn {
   font-size: 1.2rem;
+  font-weight: bold;
+  padding: 10px;
 }
 
 .board {
   display: grid;
   grid-template-columns: repeat(3, 100px);
-  grid-gap: 5px;
+  grid-gap: 10px;
   position: relative;
   /* Set game board to relative position */
 }
@@ -51,7 +59,8 @@ body::before {
 .cell {
   width: 100px;
   height: 100px;
-  border: 1.5px solid #fff;
+  border: 2.5px solid #fff;
+  border-radius: 5px;
   font-size: 2em;
   display: flex;
   justify-content: center;
@@ -77,14 +86,37 @@ body {
 .settings-container {
   display: flex;
   flex-direction: column;
-  /* Arrange settings container in a column */
   position: absolute;
   top: 0;
   right: 20px;
-  border: #fff 1px solid;
+  border: #fff 2.5px solid;
   border-radius: 5px;
-  padding: 10px;
+  padding: 20px;
   margin-top: 5px;
+}
+
+.settings-container button,
+select {
+  background-color: #fff;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.settings-container button:hover,
+select:hover {
+  background-color: #e6e6e6;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  cursor: pointer;
 }
 
 /* Settings-container mobile compatible */
@@ -164,4 +196,19 @@ body {
 #menu-links a:hover {
   transform: scale(1.2);
   cursor: pointer;
+}
+
+.cell {
+  font-weight: bold;
+  font-size: 2em;
+}
+
+.cell:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#stateResult {
+  font-weight: bold;
+  font-size: 32px;
+  color: red;
 }
