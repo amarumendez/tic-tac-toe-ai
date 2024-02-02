@@ -1,64 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="style.css">
-  <title>Tic-Tac-Toe</title>
+
+  <title>Tic-Tac-Toe AI</title>
+
+  <link rel="icon" type="image/png" href="img/logo.png">
 </head>
 
 <body>
   <div class="container">
     <h1>Tic-Tac-Toe</h1>
 
+    <!-- Menu Button -->
     <div class="menu-btn-container">
       <button id="menu" onclick="toggleMenu()">
+        <!-- Menu Icon -->
         <img src="img/menuico.svg" alt="hamburger menu icon" width="30" height="30">
       </button>
     </div>
 
+    <!-- Overlay for Menu  -->
     <div id="overlay" onclick="toggleMenu()">
+      <!-- Menu Links -->
       <div id="menu-links">
-        <a id="1" href="https://sites.google.com/view/amarusite/projects/tic-tac-toe-ai"><img src="img/gsitesico.png"
-            alt="google-site-logo" width="30" height="45"> Documentation</a>
-        <a id="2" href="#"><img src="img/gslideico.png" alt="google-slide-logo" width="30" height="45"> Presentation
-          (Coming Soon!)</a>
-        <a id="3" href="#"><img src="img/ytico.png" alt="yt-logo" width="30" height="30"> Video (Coming Soon!)</a>
-        <a id="4" href="https://github.com/amarumendez/tic-tac-toe-ai"><img src="img/githublogo.png" alt="github-logo"
-            width="30" height="30"> Github</a>
+        <!-- Documentation Link -->
+        <a id="1" href="https://sites.google.com/view/amarusite/projects/tic-tac-toe-ai">
+          <img src="img/gsitesico.png" alt="google-site-logo" width="30" height="45"> Documentation
+        </a>
+        <!-- Presentation Link (Coming Soon) -->
+        <a id="2" href="#">
+          <img src="img/gslideico.png" alt="google-slide-logo" width="30" height="45"> Presentation (Coming Soon!)
+        </a>
+        <!-- Video Link (Coming Soon) -->
+        <a id="3" href="#">
+          <img src="img/ytico.png" alt="yt-logo" width="30" height="30"> Video (Coming Soon!)
+        </a>
+        <!-- GitHub Link -->
+        <a id="4" href="https://github.com/amarumendez/tic-tac-toe-ai">
+          <img src="img/githublogo.png" alt="github-logo" width="30" height="30"> Github
+        </a>
       </div>
     </div>
 
+    <!-- Game Settings -->
     <div id="settings" class="settings-container">
-      <label for="playerMode">Select Game Mode:</label> <!-- Basically like a gamemode -->
-      <select id="playerMode">
-        <!-- Easy: Randomness, Medium: Heuristics, Hard: Minimax Algorithm-->
+      <!-- Game Mode Selection -->
+      <label for="gameMode">Select Game Mode:</label>
+      <select id="gameMode">
+        <!-- Options for Game Modes -->
+        <!--
+          Gamemode-----------------
+          1. Human vs. Easy AI
+          2. Human vs. Medium AI
+          3. Human vs. Hard AI
+          4. Two Players
+        -->
+        
         <option value="easy">Human vs. Easy AI</option>
         <option value="medium">Human vs. Medium AI</option>
         <option value="hard">Human vs. Hard AI</option>
         <option value="twoPlayers">Two Players</option>
+        
       </select>
+      
+      <!-- Reset Game Button -->
       <button id="resetButton">Reset Game</button>
     </div>
+    
     <div id="stateTurn">Player X's turn</div>
     <div id="stateResult"></div>
+
+    <!-- Game Board -->
     <div id="board" class="board">
-      <!-- The game board will be generated here -->
+      <!-- The gameboard will be generated and displayed here. -->
     </div>
+    
     <div id="instruction">
       <p>Place 3 in a row</p>
     </div>
-
+    
     <script src="main.js"></script>
     <script>
-      // Opens the Menu 
-
+      // Function to Toggle Menu
       function toggleMenu() {
-
         var overlay = document.getElementById('overlay');
         var menuIcon = document.getElementById('menu');
 
+        // Check if menu is open or closed
         if (overlay.style.width === '100%') {
           // Close menu
           overlay.style.width = '0';
@@ -70,6 +102,7 @@
         }
       }
 
+      // Function to Add Fade-In Class
       function addFadeInClass() {
         // Add the fade-in class to the body
         document.body.classList.add('fade-in');
@@ -77,15 +110,17 @@
         // Remove the fade-in class after 1 second
         setTimeout(function () {
           document.body.classList.remove('fade-in');
-
+          // Reapply fade-in class after 5 seconds
           setTimeout(addFadeInClass, 5000);
         }, 5500);
       }
-
+      
       document.addEventListener('DOMContentLoaded', function () {
+        // Call function to add fade-in class
         addFadeInClass();
       });
     </script>
+
   </div>
 </body>
 
