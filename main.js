@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const board = document.getElementById('board');
   const stateTurn = document.getElementById('stateTurn');
   const stateResult = document.getElementById('stateResult');
-  const playerModeSelect = document.getElementById('playerMode');
+  const gameModeSelect = document.getElementById('gameMode');
   const resetButton = document.getElementById('resetButton');
 
   let currentPlayer = 'X';
@@ -24,40 +24,52 @@ document.addEventListener('DOMContentLoaded', () => {
   function makeMove(index) {
     if (gameActive && gameBoard[index] === '') {
       gameBoard[index] = currentPlayer;
+      clickSFX.play();
       updateBoard();
       const winner = checkWinner(gameBoard); // Check for winner after each move
 
       if (winner !== null) {
         endGame(winner);
       } else {
-        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        if (currentPlayer === 'X') {
+          currentPlayer = 'O';
+        } else {
+          currentPlayer = 'X';
+        }
+
         stateTurn.textContent = `Player ${currentPlayer}'s turn`;
 
         // Trigger AI move after human move
         if (gameMode === 'easy' && currentPlayer === 'O') {
-          setTimeout(() => makeAIMove(), 500)
+          setTimeout(() => makeAIMove(), 1000);
         } else if (gameMode === 'medium' && currentPlayer === 'O') {
-          setTimeout(() => makeAIMove(), 500)
+          setTimeout(() => makeAIMove(), 1000);
         } else if (gameMode === 'hard' && currentPlayer === 'O') {
-          setTimeout(() => makeAIMove(), 500);
+          setTimeout(() => makeAIMove(), 1000);
         }
       }
     }
   }
 
   // Function to update the game board using AI move
+  const clickSFX = new Audio('sfx/click.wav');
+
   function makeAIMove() {
     let bestMove;
     if (gameMode === 'easy') {
       bestMove = bestEasyAIMove();
+      clickSFX.play();
     } else if (gameMode === 'medium') {
       bestMove = bestMediumAIMove();
+      clickSFX.play();
     } else if (gameMode === 'hard') {
       bestMove = bestHardAIMove();
+      clickSFX.play();
     }
 
     if (bestMove !== null) {
       makeMove(bestMove);
+      clickSFX.play();
     }
   }
 
@@ -91,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function evaluateMediumAI(board) {
-    // Example heuristic: Count the number of X's minus the number of O's on the board
     let score = 0;
     for (let cell of board) {
       if (cell === 'X') {
@@ -244,8 +255,10 @@ document.addEventListener('DOMContentLoaded', () => {
     gameActive = false;
     if (winner === 'draw') {
       stateResult.textContent = 'It\'s a draw!';
+      stateTurn.style.display = 'none';
     } else {
       stateResult.textContent = `${winner} wins!`;
+      stateTurn.style.display = 'none';
     }
   }
 
@@ -254,6 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gameBoard = Array(9).fill('');
     currentPlayer = 'X';
     gameActive = true;
+    stateTurn.style.display = 'block';
     stateTurn.textContent = `Player ${currentPlayer}'s turn`;
     stateResult.textContent = '';
     updateBoard();
@@ -261,14 +275,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   resetButton.addEventListener('click', resetGame);
 
-  playerModeSelect.addEventListener('change', () => {
-    gameMode = playerModeSelect.value;
+  gameModeSelect.addEventListener('change', () => {
+    gameMode = gameModeSelect.value;
     resetGame();
     if (gameMode === 'easy' || gameMode === 'medium' || gameMode === 'hard') {
       stateTurn.textContent = `Player ${currentPlayer}'s turn`;
-      if (gameMode === 'hard' && currentPlayer === 'O') {
-        setTimeout(() => makeAIMove(), 500);
-      }
     } else if (gameMode === 'twoPlayers') {
       stateTurn.textContent = `Player ${currentPlayer}'s turn`;
     } else {
